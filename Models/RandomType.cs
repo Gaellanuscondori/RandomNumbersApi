@@ -1,6 +1,8 @@
 namespace RandomNumbersApi.Models;
 
-public class RandomType
+public enum RandomType
 {
-    
+    Number,
+    Decimal,
+    String
 }

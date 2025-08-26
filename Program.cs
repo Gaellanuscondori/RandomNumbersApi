@@ -1,23 +1,33 @@
+using System.Text.Json.Serialization;
+using Scalar.AspNetCore;
+using RandomNumbersApi.Services; // <- para registrar IRandomService/RandomService
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<IRandomService, RandomService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.MapOpenApi();
+
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("Random Numbers API");
+        options.WithTheme(ScalarTheme.BluePlanet);
+    });
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
